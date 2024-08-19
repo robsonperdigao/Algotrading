@@ -1,0 +1,77 @@
+/////////////////////////////////////////////////
+//                                             //
+//             NOME DA ESTRATÉGIA              //
+//                                             //
+/////////////////////////////////////////////////
+{Programado por Robson Perdigão}
+{instagram.com/robson.perdigao}
+{tiktok.com/robson.perdigao}
+{youtube.com/@robson.perdigao} 
+{github.com/robsonperdigao}
+
+//BACKTEST COM MELHORES RESULTADOS
+//WDO - PtsEntrada 26 - Alvo 28 - Stop 19 - 16:00
+//WIN - 
+
+//INPUTS
+input
+  DayTrade(True);
+  Alvo(18);
+  Stop(15);
+  HoraInicio(0900);
+  HoraLimite(1200);
+  HoraFecha(1740);
+
+//VARIÁVEIS
+var
+  SinalC, SinalV     : Boolean;
+  EntradaC, EntradaV : Float;
+  Gain, Loss         : Float;
+  Tk, Offset         : Float;
+  Protection         : Boolean;
+
+//PARÂMETROS E CONDIÇÕES
+begin
+  SinalC     := ;
+  SinalV     := ;
+  EntradaC   := ;
+  EntradaV   := ;
+  Tk         := MinPriceIncrement;
+  Offset     := tk*5;
+  Protection := Date <= 1230801; //Altere a data limite que o cliente pode utilizar o código
+
+//ENTRADA
+if (Protection) then
+  if (not HasPosition) and (Time >= HoraInicio) and (Time <= HoraLimite) then
+    begin
+      if SinalC then
+        BuyLimit(EntradaC); //Se a entrada de compra for abaixo do preço atual - Contra a tendência
+        BuyStop(EntradaC); //Se a entrada de compra for acima do preço atual - A favor da tendência
+      
+      if SinalV then
+        SellShortLimit(EntradaV); //Se a entrada de venda for acima do preço atual - Contra a tendência
+        SellShortStop(EntradaV); //Se a entrada de venda for acima do preço atual - A favor da tendência
+    end;
+
+//SAÍDA
+  if (isBought) then
+    SellToCoverLimit(BuyPrice + Alvo);
+    SellToCoverStop(BuyPrice - Stop);
+
+  if (isSold) then
+    BuyToCoverLimit(SellPrice - Alvo);
+    BuyToCoverStop(SellPrice + Stop);
+
+  if (DayTrade) and (Time >= HoraFecha) and (HasPosition) then ClosePosition;
+
+//INDICADORES E COLORAÇÕES
+  if (Time > HoraInicio) then
+    begin
+      Plot(EntradaC);
+        SetPlotColor(1, clGreen);
+      Plot2(EntradaV);
+        SetPlotColor(2, clRed);
+    end;   
+end
+
+
